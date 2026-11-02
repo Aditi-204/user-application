@@ -18,7 +18,7 @@ DB_NAME = os.getenv("MONGODB_DATABASE", "accessdesk")
 JWT_SECRET = os.getenv("JWT_SECRET", "development-only-change-me")
 ALGORITHM = "HS256"
 TOKEN_MINUTES = 60 * 12
-pwd = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto", pbkdf2_sha256__rounds=600000)
 bearer = HTTPBearer(auto_error=False)
 client = MongoClient(MONGO_URL, serverSelectionTimeoutMS=5000)
 db = client[DB_NAME]
