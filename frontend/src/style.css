@@ -217,7 +217,7 @@ tbody tr:hover { background: #fcfcff; }
 .auth-top button:hover,.link-button:hover { color: #4539ac; }
 .auth-form-wrap { width: min(390px,calc(100% - 48px)); margin: auto; }
 .mobile-brand { display: none; }
-.form-kicker { margin-bottom: 10px; color: #7165d3; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; }
+.form-kicker { margin-bottom: 10px; color: #76273f; font-size: 9px; font-weight: 700; letter-spacing: 1.2px; }
 .auth-form-wrap h2 { margin: 0 0 8px; color: #282c41; font: 750 28px Manrope,sans-serif; letter-spacing: -.9px; }
 .form-intro { margin: 0 0 24px; color: #8e93a5; font-size: 12px; line-height: 1.55; }
 .auth-switch { display: flex; height: 43px; margin-bottom: 22px; padding: 4px; border: 1px solid #ebecf2; border-radius: 9px; background: #f7f8fb; }
