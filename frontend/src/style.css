@@ -479,3 +479,23 @@ tbody tr:hover { background: #fcf8f4; }
   .theme-toggle { width: 36px; min-width: 36px; padding: 0; }
   .auth-top .theme-toggle { margin-right: auto; }
 }
+
+/* Cream surfaces for the light palette */
+:root:not([data-theme="dark"]) .sidebar,
+:root:not([data-theme="dark"]) .topbar,
+:root:not([data-theme="dark"]) .stat-card,
+:root:not([data-theme="dark"]) .panel,
+:root:not([data-theme="dark"]) .user-top,
+:root:not([data-theme="dark"]) .auth-right,
+:root:not([data-theme="dark"]) .auth-page { background-color: #f3e8d8; }
+:root:not([data-theme="dark"]) .workspace,
+:root:not([data-theme="dark"]) .input-wrap,
+:root:not([data-theme="dark"]) .button-outline,
+:root:not([data-theme="dark"]) .theme-toggle,
+:root:not([data-theme="dark"]) .auth-switch button.active,
+:root:not([data-theme="dark"]) .hero-badge,
+:root:not([data-theme="dark"]) .float-card { background-color: #f8efe2; }
+:root:not([data-theme="dark"]) .profile-mini { background-color: #f3e8d8; }
+:root:not([data-theme="dark"]) .auth-switch { background-color: #eadcc9; }
+:root:not([data-theme="dark"]) .auth-page { background-color: #f3e8d8; }
+:root:not([data-theme="dark"]) .page-content { background-color: #f7f0e6; }
