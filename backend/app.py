@@ -1,4 +1,7 @@
+import base64
+import binascii
 import os
+import re
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
@@ -47,16 +50,40 @@ class LoginInput(BaseModel):
 
 class ProfileInput(BaseModel):
     name: str = Field(min_length=2, max_length=80)
+    avatar_data: str | None = Field(default=None, max_length=1_400_000)
 
 
 def now():
     return datetime.now(timezone.utc)
 
 
-def public_user(user):
-    return {"id": str(user["_id"]), "name": user["name"], "email": user["email"],
-            "role": user["role"], "status": user["status"],
-            "created_at": user["created_at"].isoformat()}
+def public_user(user, include_avatar=False):
+    result = {"id": str(user["_id"]), "name": user["name"], "email": user["email"],
+              "role": user["role"], "status": user["status"],
+              "created_at": user["created_at"].isoformat()}
+    if include_avatar and user.get("avatar_data"):
+        result["avatar_data"] = user["avatar_data"]
+    return result
+
+
+def validate_avatar(data_uri):
+    match = re.fullmatch(r"data:image/(png|jpeg|webp);base64,([A-Za-z0-9+/]*={0,2})", data_uri)
+    if not match:
+        raise HTTPException(status_code=422, detail="Use a PNG, JPEG, or WebP profile photo")
+    try:
+        image = base64.b64decode(match.group(2), validate=True)
+    except (binascii.Error, ValueError):
+        raise HTTPException(status_code=422, detail="The profile photo file is invalid")
+    if not image or len(image) > 1_048_576:
+        raise HTTPException(status_code=413, detail="Profile photos must be 1 MB or smaller")
+    kind = match.group(1)
+    valid_signature = (
+        (kind == "png" and image.startswith(b"\x89PNG\r\n\x1a\n")) or
+        (kind == "jpeg" and image.startswith(b"\xff\xd8\xff")) or
+        (kind == "webp" and len(image) >= 12 and image.startswith(b"RIFF") and image[8:12] == b"WEBP")
+    )
+    if not valid_signature:
+        raise HTTPException(status_code=422, detail="The selected file does not match its image type")
 
 
 def record(action, actor, target=None, detail=""):
@@ -139,21 +166,35 @@ def login(body: LoginInput):
     if user["status"] == "rejected":
         raise HTTPException(status_code=403, detail="Your registration was not approved. Contact an administrator.")
     record("login", user, user, "Successful login")
-    return {"token": token_for(user), "user": public_user(user)}
+    return {"token": token_for(user), "user": public_user(user, include_avatar=True)}
 
 
 @app.get("/api/auth/me")
 def me(user=Depends(current_user)):
-    return public_user(user)
+    return public_user(user, include_avatar=True)
 
 
 @app.patch("/api/profile")
 def update_profile(body: ProfileInput, user=Depends(current_user)):
     name = body.name.strip()
-    users.update_one({"_id": user["_id"]}, {"$set": {"name": name}})
-    user["name"] = name
-    record("profile_updated", user, user, "Profile name updated")
-    return public_user(user)
+    updates = {"name": name}
+    unset = {}
+    avatar_changed = "avatar_data" in body.__fields_set__
+    if avatar_changed:
+        if body.avatar_data is None:
+            unset["avatar_data"] = ""
+        else:
+            validate_avatar(body.avatar_data)
+            updates["avatar_data"] = body.avatar_data
+    update_doc = {"$set": updates}
+    if unset:
+        update_doc["$unset"] = unset
+    users.update_one({"_id": user["_id"]}, update_doc)
+    user.update(updates)
+    for key in unset:
+        user.pop(key, None)
+    record("profile_updated", user, user, "Profile details updated" if avatar_changed else "Profile name updated")
+    return public_user(user, include_avatar=True)
 
 
 @app.delete("/api/profile", status_code=204)

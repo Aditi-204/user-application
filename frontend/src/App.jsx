@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Activity, ArrowDownToLine, ArrowRight, Check, CheckCircle2, ChevronDown, CircleHelp, Clock3, Filter, LayoutDashboard, LockKeyhole, LogOut, Moon, MoreHorizontal, Search, ShieldCheck, Sparkles, Sun, UserRound, Users, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Activity, ArrowDownToLine, ArrowRight, Camera, Check, CheckCircle2, ChevronDown, CircleHelp, Clock3, Filter, LayoutDashboard, LockKeyhole, LogOut, Moon, MoreHorizontal, Search, ShieldCheck, Sparkles, Sun, UserRound, Users, X } from 'lucide-react';
 
 const API = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 const initialUser = JSON.parse(localStorage.getItem('accessdesk_user') || 'null');
@@ -86,7 +86,60 @@ function App() {
 function Auth({mode,setMode,adminMode,setAdminMode,notice,busy,onSubmit,theme,toggleTheme}) { return <div className="auth-page"><div className="auth-left"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="auth-pitch"><div className="hero-badge"><span/> ACCESS, WITH INTENTION</div><h1>A safer space<br/>starts <em>here.</em></h1><p>Thoughtful access management for teams that value trust, transparency, and people.</p><div className="hero-graphic"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="hero-center"><ShieldCheck size={34}/></div><div className="float-card float-a"><span className="float-icon green"><Check size={14}/></span><span><b>Access approved</b><small>Just now</small></span></div><div className="float-card float-b"><span className="float-icon violet"><UserRound size={15}/></span><span><b>New request</b><small>Awaiting review</small></span></div><span className="sparkle s1">✦</span><span className="sparkle s2">✧</span></div></div><div className="auth-left-footer"><span>DESIGNED FOR PEOPLE. BUILT FOR TRUST.</span><span><i/> SECURE BY DESIGN</span></div></div>
   <div className="auth-right"><div className="auth-top"><ThemeButton theme={theme} onToggle={toggleTheme}/><span>Already have access?</span><button onClick={()=>{setMode(mode==='login'?'register':'login');setAdminMode(false)}}>{mode==='login'?'Create an account':'Sign in'}</button></div><div className="auth-form-wrap"><div className="mobile-brand"><span className="brand-mark"><ShieldCheck size={18}/></span>accessdesk</div><div className="form-kicker">{adminMode?'ADMINISTRATOR PORTAL':'YOUR WORKSPACE AWAITS'}</div><h2>{mode==='register'?'Create your account':adminMode?'Welcome, administrator':'Welcome back'}</h2><p className="form-intro">{mode==='register'?'Request access to your team’s workspace.':'Enter your details to access your workspace.'}</p><div className="auth-switch"><button className={!adminMode?'active':''} onClick={()=>setAdminMode(false)}><UserRound size={16}/> User sign in</button><button className={adminMode?'active':''} onClick={()=>setAdminMode(true)}><ShieldCheck size={16}/> Admin sign in</button></div><form onSubmit={onSubmit}>{mode==='register'&&<label>Full name<div className="input-wrap"><UserRound size={16}/><input name="name" placeholder="e.g. Alex Morgan" required minLength="2"/></div></label>}<label>Email address<div className="input-wrap"><span className="at-icon">@</span><input name="email" type="email" placeholder="you@company.com" required/></div></label><label>Password<div className="input-wrap"><LockKeyhole size={15}/><input name="password" type="password" placeholder={mode==='register'?'At least 8 characters':'Enter your password'} required minLength={mode==='register'?8:1}/></div></label>{mode==='login'&&<div className="form-options"><label className="remember"><input type="checkbox"/> Remember me</label><button type="button" className="link-button">Forgot password?</button></div>}<button className="button primary submit-btn" disabled={busy}>{busy?'Please wait…':mode==='register'?'Request access':'Sign in'}<ArrowRight size={16}/></button></form>{notice&&<div className="inline-notice">{notice}</div>}<div className="auth-divider"><span/> OR <span/></div><div className="approval-note"><span><Clock3 size={16}/></span><p><b>New to the workspace?</b><br/>Account requests are reviewed by an administrator before access is granted.</p></div><div className="auth-bottom"><span>© {new Date().getFullYear()} AccessDesk</span><button><CircleHelp size={14}/> Help center</button></div></div></div></div> }
 
-function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) { const [name,setName]=useState(user.name); const [busy,setBusy]=useState(false); async function save(e){e.preventDefault();setBusy(true);try{const u=await api('/profile',{method:'PATCH',body:JSON.stringify({name})});localStorage.setItem('accessdesk_user',JSON.stringify(u));setNotice('Profile updated.');}catch(err){setNotice(err.message)}finally{setBusy(false)}} async function del(){if(!window.confirm('Delete your account and profile? This cannot be undone.'))return;try{await api('/profile',{method:'DELETE'});signOut()}catch(e){setNotice(e.message)}} return <div className="user-page"><header className="user-top"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="user-actions"><ThemeButton theme={theme} onToggle={toggleTheme}/><button className="button button-outline" onClick={signOut}><LogOut size={16}/> Sign out</button></div></header><main className="user-content"><div className="hero-badge"><span/> MEMBER WORKSPACE</div><h1>Welcome, <em>{user.name.split(' ')[0]}.</em></h1><p>Your account is approved and you have access to the workspace.</p><section className="panel profile-card"><div className="panel-head"><div><h2>Your profile</h2><p>Update the name associated with your account.</p></div><span className="status approved"><CheckCircle2 size={13}/> Approved</span></div><form onSubmit={save} className="profile-form"><label>Full name<div className="input-wrap"><UserRound size={16}/><input value={name} onChange={e=>setName(e.target.value)} required minLength="2"/></div></label><label>Email address<div className="input-wrap"><span className="at-icon">@</span><input value={user.email} disabled/></div></label><button className="button primary" disabled={busy}>Save profile <ArrowRight size={15}/></button></form><button className="delete-link" onClick={del}>Delete my profile</button></section>{notice&&<div className="inline-notice">{notice}</div>}</main></div> }
+function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) {
+  const [name,setName]=useState(user.name);
+  const [avatarData,setAvatarData]=useState(user.avatar_data || null);
+  const [busy,setBusy]=useState(false);
+  const photoInput=useRef(null);
+
+  function choosePhoto(event) {
+    const file=event.target.files?.[0];
+    if (!file) return;
+    if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { setNotice('Choose a PNG, JPEG, or WebP image.'); event.target.value=''; return; }
+    if (file.size>1024*1024) { setNotice('Profile photos must be 1 MB or smaller.'); event.target.value=''; return; }
+    const reader=new FileReader();
+    reader.onload=()=>setAvatarData(typeof reader.result==='string'?reader.result:null);
+    reader.onerror=()=>setNotice('Could not read that image. Please try another file.');
+    reader.readAsDataURL(file);
+  }
+
+  async function save(event) {
+    event.preventDefault(); setBusy(true);
+    try {
+      const updated=await api('/profile',{method:'PATCH',body:JSON.stringify({name,avatar_data:avatarData})});
+      localStorage.setItem('accessdesk_user',JSON.stringify(updated));
+      setNotice('Profile updated.');
+    } catch (error) { setNotice(error.message); }
+    finally { setBusy(false); }
+  }
+
+  async function del() {
+    if (!window.confirm('Delete your account and profile? This cannot be undone.')) return;
+    try { await api('/profile',{method:'DELETE'}); signOut(); }
+    catch (error) { setNotice(error.message); }
+  }
+
+  return <div className="user-page">
+    <header className="user-top"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="user-actions"><ProfileAvatar name={name} photo={avatarData} size="small"/><ThemeButton theme={theme} onToggle={toggleTheme}/><button className="button button-outline" onClick={signOut}><LogOut size={16}/> Sign out</button></div></header>
+    <main className="user-content">
+      <div className="member-identity"><ProfileAvatar name={name} photo={avatarData}/><div><div className="hero-badge"><span/> MEMBER WORKSPACE</div><h1>Welcome, <em>{name.split(' ')[0]}.</em></h1><p>Your account is approved and you have access to the workspace.</p></div></div>
+      <section className="panel profile-card"><div className="panel-head"><div><h2>Your profile</h2><p>Update your photo and the name associated with your account.</p></div><span className="status approved"><CheckCircle2 size={13}/> Approved</span></div>
+        <form onSubmit={save} className="profile-form">
+          <div className="avatar-editor"><ProfileAvatar name={name} photo={avatarData}/><div className="avatar-editor-copy"><b>Profile photo</b><p>PNG, JPEG, or WebP · up to 1 MB</p><div className="avatar-editor-actions"><button type="button" className="button button-outline" onClick={()=>photoInput.current?.click()}><Camera size={15}/> Choose photo</button>{avatarData&&<button type="button" className="photo-remove" onClick={()=>setAvatarData(null)}>Remove photo</button>}</div><input ref={photoInput} className="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" onChange={choosePhoto}/></div></div>
+          <label>Full name<div className="input-wrap"><UserRound size={16}/><input value={name} onChange={event=>setName(event.target.value)} required minLength="2"/></div></label>
+          <label>Email address<div className="input-wrap"><span className="at-icon">@</span><input value={user.email} disabled/></div></label>
+          <button className="button primary" disabled={busy}>{busy?'Saving…':'Save profile'} <ArrowRight size={15}/></button>
+        </form>
+        <button className="delete-link" onClick={del}>Delete my profile</button>
+      </section>{notice&&<div className="inline-notice">{notice}</div>}
+    </main>
+  </div>;
+}
+
+function ProfileAvatar({name,photo,size=''}) {
+  const initials=(name||'User').split(' ').map(part=>part[0]).slice(0,2).join('').toUpperCase();
+  return <span className={`member-avatar ${size}`}>{photo?<img src={photo} alt={`${name}'s profile`}/>:initials}</span>;
+}
 function ThemeButton({theme,onToggle}) { const dark=theme==='dark'; const Icon=dark?Sun:Moon; return <button className="theme-toggle" type="button" onClick={onToggle} aria-label={`Switch to ${dark?'light':'dark'} mode`} title={`Switch to ${dark?'light':'dark'} mode`}><Icon size={16}/><span>{dark?'Light':'Dark'} mode</span></button>; }
 function Stat({label,value,note,trend,icon:Icon,color}){return <article className="stat-card"><div className="stat-top"><span>{label}</span><span className={`stat-icon ${color}`}><Icon size={17}/></span></div><div className="stat-number">{value.toLocaleString()}</div><div className="stat-bottom"><span>{note}</span><span className={`trend ${color}`}>{trend}</span></div></article>}
 function Person({name,email}){return <div className="person"><span className={`avatar color-${(name||'A').charCodeAt(0)%5}`}>{(name||'U').split(' ').map(x=>x[0]).slice(0,2).join('').toUpperCase()}</span><span><b>{name}</b><small>{email}</small></span></div>}
