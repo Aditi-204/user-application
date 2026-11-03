@@ -191,23 +191,29 @@ tbody tr:hover { background: #fcfcff; }
 .auth-pitch h1 { margin: 24px 0 16px; color: #fff; font: 750 clamp(39px,4vw,54px)/1.08 Manrope,sans-serif; letter-spacing: -2.5px; }
 .auth-pitch h1 em { color: #b2a9ff; font-style: normal; }
 .auth-pitch > p { max-width: 360px; color: #cbc9dc; font-size: 14px; line-height: 1.75; }
-.hero-graphic { position: relative; display: grid; max-width: 390px; height: 205px; place-items: center; margin-top: 26px; }
-.orbit { position: absolute; width: 188px; height: 188px; border: 1px solid #ffffff22; border-radius: 50%; }
-.orbit-two { width: 143px; height: 143px; border-color: #ffffff2a; }
-.hero-center { z-index: 1; width: 77px; height: 77px; display: grid; place-items: center; transform: rotate(-7deg); border: 1px solid #ffffff40; border-radius: 24px; background: linear-gradient(145deg,#a095f7,#7164d7); box-shadow: 0 15px 34px #17152c66; color: #fff; }
-.hero-center svg { transform: rotate(7deg); }
-.float-card { position: absolute; z-index: 2; display: flex; align-items: center; gap: 9px; padding: 10px 12px; border: 1px solid #ffffff90; border-radius: 10px; background: #fff; box-shadow: 0 12px 32px #15142d38; }
-.float-a { top: 29px; left: 1px; }
-.float-b { right: -5px; bottom: 25px; }
-.float-card b,.float-card small { display: block; }
-.float-card b { color: #45475a; font-size: 9px; }
-.float-card small { margin-top: 3px; color: #9b9dad; font-size: 8px; }
+.hero-graphic { position: relative; display: grid; max-width: 390px; height: 205px; place-items: center; margin-top: 26px; perspective: 850px; transform-style: preserve-3d; }
+.orbit { position: absolute; width: 188px; height: 188px; border: 1px solid #ffffff31; border-radius: 50%; transform-style: preserve-3d; }
+.orbit:before { position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; transform: translateX(-50%); border-radius: 50%; background: #f0bbc6; box-shadow: 0 0 14px #f0bbc6c9; content: ''; }
+.orbit-one { animation: orbit-one-spin 12s linear infinite; }
+.orbit-two { width: 143px; height: 143px; border-color: #ffffff40; animation: orbit-two-spin 9s linear infinite reverse; }
+.orbit-two:before { top: auto; bottom: 17%; width: 6px; height: 6px; background: #d995a5; box-shadow: 0 0 12px #d995a5c9; }
+.hero-center { position: relative; z-index: 2; width: 79px; height: 79px; display: grid; place-items: center; transform-style: preserve-3d; animation: shield-hover 4.8s ease-in-out infinite; border: 1px solid #ffffff6b; border-radius: 23px; background: linear-gradient(145deg,#ca7789 0%,#9b405a 46%,#652139 100%); box-shadow: 0 24px 34px #170a10a3,inset 5px 5px 10px #ffffff51,inset -8px -9px 14px #42101f9c; color: #fff7f4; }
+.hero-center:before { position: absolute; inset: 5px; transform: translateZ(-10px) translateY(9px); border: 1px solid #411422; border-radius: 20px; background: linear-gradient(145deg,#7e2a43,#3d1222); box-shadow: 0 13px 18px #17081070; content: ''; }
+.hero-center:after { position: absolute; inset: 1px; transform: translateZ(2px); border: 1px solid #ffe5e955; border-radius: 22px; background: linear-gradient(135deg,#ffffff16,transparent 48%,#390f1e2b); content: ''; pointer-events: none; }
+.hero-center svg { position: relative; z-index: 3; width: 36px; height: 36px; transform: translateZ(17px); filter: drop-shadow(0 3px 3px #3c112a80); }
+.float-card { display: none; }
 .float-icon { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; }
 .float-icon.green { background: #e8f7ee; color: #46996a; }
 .float-icon.violet { background: #efedff; color: #7365d3; }
 .sparkle { position: absolute; color: #b5aaf6; }
 .s1 { top: 19px; right: 49px; }
 .s2 { bottom: 22px; left: 51px; font-size: 24px; }
+@keyframes orbit-one-spin { from { transform: rotateX(67deg) rotateZ(0deg); } to { transform: rotateX(67deg) rotateZ(360deg); } }
+@keyframes orbit-two-spin { from { transform: rotateY(66deg) rotateZ(0deg); } to { transform: rotateY(66deg) rotateZ(360deg); } }
+@keyframes shield-hover { 0%,100% { transform: translateY(2px) rotateX(12deg) rotateY(-15deg); } 50% { transform: translateY(-5px) rotateX(18deg) rotateY(-7deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .orbit-one,.orbit-two,.hero-center { animation: none !important; }
+}
 .auth-left-footer { z-index: 1; display: flex; justify-content: space-between; gap: 12px; color: #aaa7c1; font-size: 8px; font-weight: 700; letter-spacing: .8px; }
 .auth-left-footer span:last-child { display: flex; align-items: center; gap: 6px; }
 .auth-left-footer i { width: 6px; height: 6px; border-radius: 50%; background: #69ce95; }
