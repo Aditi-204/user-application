@@ -11,6 +11,7 @@ const title = (s='') => s.replaceAll('_', ' ').replace(/\b\w/g, c => c.toUpperCa
 function App() {
   const [token, setToken] = useState(initialToken);
   const [user, setUser] = useState(initialUser);
+  const userPreview = import.meta.env.DEV && new URLSearchParams(window.location.search).get('preview') === 'user';
   const [theme, setTheme] = useState(() => localStorage.getItem('accessdesk_theme') || 'light');
   const [mode, setMode] = useState('login');
   const [adminMode, setAdminMode] = useState(false);
@@ -61,6 +62,7 @@ function App() {
   }
   async function decide(id, decision) { try { await api(`/admin/users/${id}/${decision}`, { method: 'POST' }); await loadDashboard(); setNotice(`Registration ${decision}d.`); } catch (e) { setNotice(e.message); } }
 
+  if ((!token || !user) && userPreview) return <UserHome user={{id:'preview-user',name:'Avery Morgan',email:'avery.morgan@example.com',role:'user',status:'approved'}} api={api} signOut={()=>{window.location.href='/';}} notice={notice} setNotice={setNotice} theme={theme} toggleTheme={toggleTheme} preview />;
   if (!token || !user) return <Auth mode={mode} setMode={setMode} adminMode={adminMode} setAdminMode={setAdminMode} notice={notice} busy={busy} onSubmit={submitAuth} theme={theme} toggleTheme={toggleTheme} />;
   if (user.role !== 'admin') return <UserHome user={user} api={api} signOut={signOut} notice={notice} setNotice={setNotice} theme={theme} toggleTheme={toggleTheme} />;
   const pending = users.filter(u => u.status === 'pending');
@@ -86,7 +88,7 @@ function App() {
 function Auth({mode,setMode,adminMode,setAdminMode,notice,busy,onSubmit,theme,toggleTheme}) { return <div className="auth-page"><div className="auth-left"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="auth-pitch"><div className="hero-badge"><span/> ACCESS, WITH INTENTION</div><h1>A safer space<br/>starts <em>here.</em></h1><p>Thoughtful access management for teams that value trust, transparency, and people.</p><div className="hero-graphic"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="hero-center"><ShieldCheck size={34}/></div><div className="float-card float-a"><span className="float-icon green"><Check size={14}/></span><span><b>Access approved</b><small>Just now</small></span></div><div className="float-card float-b"><span className="float-icon violet"><UserRound size={15}/></span><span><b>New request</b><small>Awaiting review</small></span></div><span className="sparkle s1">✦</span><span className="sparkle s2">✧</span></div></div><div className="auth-left-footer"><span>DESIGNED FOR PEOPLE. BUILT FOR TRUST.</span><span><i/> SECURE BY DESIGN</span></div></div>
   <div className="auth-right"><div className="auth-top"><ThemeButton theme={theme} onToggle={toggleTheme}/><span>Already have access?</span><button onClick={()=>{setMode(mode==='login'?'register':'login');setAdminMode(false)}}>{mode==='login'?'Create an account':'Sign in'}</button></div><div className="auth-form-wrap"><div className="mobile-brand"><span className="brand-mark"><ShieldCheck size={18}/></span>accessdesk</div><div className="form-kicker">{adminMode?'ADMINISTRATOR PORTAL':'YOUR WORKSPACE AWAITS'}</div><h2>{mode==='register'?'Create your account':adminMode?'Welcome, administrator':'Welcome back'}</h2><p className="form-intro">{mode==='register'?'Request access to your team’s workspace.':'Enter your details to access your workspace.'}</p><div className="auth-switch"><button className={!adminMode?'active':''} onClick={()=>setAdminMode(false)}><UserRound size={16}/> User sign in</button><button className={adminMode?'active':''} onClick={()=>setAdminMode(true)}><ShieldCheck size={16}/> Admin sign in</button></div><form onSubmit={onSubmit}>{mode==='register'&&<label>Full name<div className="input-wrap"><UserRound size={16}/><input name="name" placeholder="e.g. Alex Morgan" required minLength="2"/></div></label>}<label>Email address<div className="input-wrap"><span className="at-icon">@</span><input name="email" type="email" placeholder="you@company.com" required/></div></label><label>Password<div className="input-wrap"><LockKeyhole size={15}/><input name="password" type="password" placeholder={mode==='register'?'At least 8 characters':'Enter your password'} required minLength={mode==='register'?8:1}/></div></label>{mode==='login'&&<div className="form-options"><label className="remember"><input type="checkbox"/> Remember me</label><button type="button" className="link-button">Forgot password?</button></div>}<button className="button primary submit-btn" disabled={busy}>{busy?'Please wait…':mode==='register'?'Request access':'Sign in'}<ArrowRight size={16}/></button></form>{notice&&<div className="inline-notice">{notice}</div>}<div className="auth-divider"><span/> OR <span/></div><div className="approval-note"><span><Clock3 size={16}/></span><p><b>New to the workspace?</b><br/>Account requests are reviewed by an administrator before access is granted.</p></div><div className="auth-bottom"><span>© {new Date().getFullYear()} AccessDesk</span><button><CircleHelp size={14}/> Help center</button></div></div></div></div> }
 
-function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) {
+function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme,preview=false}) {
   const [name,setName]=useState(user.name);
   const [avatarData,setAvatarData]=useState(user.avatar_data || null);
   const [busy,setBusy]=useState(false);
@@ -104,7 +106,9 @@ function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) {
   }
 
   async function save(event) {
-    event.preventDefault(); setBusy(true);
+    event.preventDefault();
+    if (preview) { setNotice('Preview mode — profile changes are not saved.'); return; }
+    setBusy(true);
     try {
       const updated=await api('/profile',{method:'PATCH',body:JSON.stringify({name,avatar_data:avatarData})});
       localStorage.setItem('accessdesk_user',JSON.stringify(updated));
@@ -114,13 +118,14 @@ function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) {
   }
 
   async function del() {
+    if (preview) { setNotice('Preview mode — account actions are disabled.'); return; }
     if (!window.confirm('Delete your account and profile? This cannot be undone.')) return;
     try { await api('/profile',{method:'DELETE'}); signOut(); }
     catch (error) { setNotice(error.message); }
   }
 
   return <div className="user-page">
-    <header className="user-top"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="user-actions"><ProfileAvatar name={name} photo={avatarData} size="small"/><ThemeButton theme={theme} onToggle={toggleTheme}/><button className="button button-outline" onClick={signOut}><LogOut size={16}/> Sign out</button></div></header>
+    <header className="user-top"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="user-actions">{preview&&<span className="preview-pill">DEMO PREVIEW</span>}<ProfileAvatar name={name} photo={avatarData} size="small"/><ThemeButton theme={theme} onToggle={toggleTheme}/><button className="button button-outline" onClick={signOut}><LogOut size={16}/>{preview?'Back to sign in':'Sign out'}</button></div></header>
     <main className="user-content">
       <div className="member-identity"><ProfileAvatar name={name} photo={avatarData}/><div><div className="hero-badge"><span/> MEMBER WORKSPACE</div><h1>Welcome, <em>{name.split(' ')[0]}.</em></h1><p>Your account is approved and you have access to the workspace.</p></div></div>
       <section className="panel profile-card"><div className="panel-head"><div><h2>Your profile</h2><p>Update your photo and the name associated with your account.</p></div><span className="status approved"><CheckCircle2 size={13}/> Approved</span></div>
@@ -128,9 +133,9 @@ function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme}) {
           <div className="avatar-editor"><ProfileAvatar name={name} photo={avatarData}/><div className="avatar-editor-copy"><b>Profile photo</b><p>PNG, JPEG, or WebP · up to 1 MB</p><div className="avatar-editor-actions"><button type="button" className="button button-outline" onClick={()=>photoInput.current?.click()}><Camera size={15}/> Choose photo</button>{avatarData&&<button type="button" className="photo-remove" onClick={()=>setAvatarData(null)}>Remove photo</button>}</div><input ref={photoInput} className="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" onChange={choosePhoto}/></div></div>
           <label>Full name<div className="input-wrap"><UserRound size={16}/><input value={name} onChange={event=>setName(event.target.value)} required minLength="2"/></div></label>
           <label>Email address<div className="input-wrap"><span className="at-icon">@</span><input value={user.email} disabled/></div></label>
-          <button className="button primary" disabled={busy}>{busy?'Saving…':'Save profile'} <ArrowRight size={15}/></button>
+          <button className="button primary" disabled={busy}>{busy?'Saving…':preview?'Preview changes':'Save profile'} <ArrowRight size={15}/></button>
         </form>
-        <button className="delete-link" onClick={del}>Delete my profile</button>
+        {!preview&&<button className="delete-link" onClick={del}>Delete my profile</button>}
       </section>{notice&&<div className="inline-notice">{notice}</div>}
     </main>
   </div>;
