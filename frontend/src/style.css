@@ -193,10 +193,8 @@ tbody tr:hover { background: #fcfcff; }
 .auth-pitch > p { max-width: 360px; color: #cbc9dc; font-size: 14px; line-height: 1.75; }
 .hero-graphic { position: relative; display: grid; max-width: 390px; height: 205px; place-items: center; margin-top: 26px; perspective: 850px; transform-style: preserve-3d; }
 .orbit { position: absolute; width: 188px; height: 188px; border: 1px solid #ffffff31; border-radius: 50%; transform-style: preserve-3d; }
-.orbit:before { position: absolute; top: -4px; left: 50%; width: 8px; height: 8px; transform: translateX(-50%); border-radius: 50%; background: #f0bbc6; box-shadow: 0 0 14px #f0bbc6c9; content: ''; }
 .orbit-one { animation: orbit-one-spin 7s linear infinite; }
 .orbit-two { width: 143px; height: 143px; border-color: #ffffff40; animation: orbit-two-spin 5.5s linear infinite reverse; }
-.orbit-two:before { top: auto; bottom: 17%; width: 6px; height: 6px; background: #d995a5; box-shadow: 0 0 12px #d995a5c9; }
 .hero-center { position: relative; z-index: 2; width: 79px; height: 79px; display: grid; place-items: center; transform-style: preserve-3d; animation: shield-hover 4.8s ease-in-out infinite; border: 1px solid #ffffff6b; border-radius: 23px; background: linear-gradient(145deg,#ca7789 0%,#9b405a 46%,#652139 100%); box-shadow: 0 24px 34px #170a10a3,inset 5px 5px 10px #ffffff51,inset -8px -9px 14px #42101f9c; color: #fff7f4; }
 .hero-center:before { position: absolute; inset: 5px; transform: translateZ(-10px) translateY(9px); border: 1px solid #411422; border-radius: 20px; background: linear-gradient(145deg,#7e2a43,#3d1222); box-shadow: 0 13px 18px #17081070; content: ''; }
 .hero-center:after { position: absolute; inset: 1px; transform: translateZ(2px); border: 1px solid #ffe5e955; border-radius: 22px; background: linear-gradient(135deg,#ffffff16,transparent 48%,#390f1e2b); content: ''; pointer-events: none; }
@@ -208,8 +206,8 @@ tbody tr:hover { background: #fcfcff; }
 .sparkle { position: absolute; color: #b5aaf6; }
 .s1 { top: 19px; right: 49px; }
 .s2 { bottom: 22px; left: 51px; font-size: 24px; }
-@keyframes orbit-one-spin { from { transform: rotateX(67deg) rotateZ(0deg); } to { transform: rotateX(67deg) rotateZ(360deg); } }
-@keyframes orbit-two-spin { from { transform: rotateY(66deg) rotateZ(-14deg); } to { transform: rotateY(66deg) rotateZ(346deg); } }
+@keyframes orbit-one-spin { from { transform: rotateX(67deg) rotateY(0deg) rotateZ(0deg); } to { transform: rotateX(67deg) rotateY(360deg) rotateZ(360deg); } }
+@keyframes orbit-two-spin { from { transform: rotateX(10deg) rotateY(175deg) rotateZ(-14deg); } to { transform: rotateX(10deg) rotateY(535deg) rotateZ(346deg); } }
 @keyframes shield-hover { 0%,100% { transform: translateY(2px) rotateX(12deg) rotateY(-15deg); } 50% { transform: translateY(-5px) rotateX(18deg) rotateY(-7deg); } }
 @media (prefers-reduced-motion: reduce) {
   .orbit-one,.orbit-two,.hero-center { animation: none !important; }
