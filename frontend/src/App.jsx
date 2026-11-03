@@ -22,6 +22,7 @@ function App() {
   const [summary, setSummary] = useState('');
   const [notice, setNotice] = useState('');
   const [busy, setBusy] = useState(false);
+  const [doorOpening, setDoorOpening] = useState(false);
 
   async function api(path, options={}) {
     const response = await fetch(API + path, { ...options, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}), ...options.headers } });
@@ -56,17 +57,22 @@ function App() {
         if (adminMode && result.user.role !== 'admin') throw new Error('This account does not have administrator access.');
         if (!adminMode && result.user.role === 'admin') throw new Error('Use the administrator sign-in option for this account.');
         localStorage.setItem('accessdesk_token', result.token); localStorage.setItem('accessdesk_user', JSON.stringify(result.user));
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (!reducedMotion) setDoorOpening(true);
         setToken(result.token); setUser(result.user); setNotice('');
+        if (!reducedMotion) await new Promise(resolve => setTimeout(resolve, 1150));
+        setDoorOpening(false);
       }
     } catch (err) { setNotice(err.message); } finally { setBusy(false); }
   }
   async function decide(id, decision) { try { await api(`/admin/users/${id}/${decision}`, { method: 'POST' }); await loadDashboard(); setNotice(`Registration ${decision}d.`); } catch (e) { setNotice(e.message); } }
 
   if ((!token || !user) && userPreview) return <UserHome user={{id:'preview-user',name:'Avery Morgan',email:'avery.morgan@example.com',role:'user',status:'approved'}} api={api} signOut={()=>{window.location.href='/';}} notice={notice} setNotice={setNotice} theme={theme} toggleTheme={toggleTheme} preview />;
-  if (!token || !user) return <Auth mode={mode} setMode={setMode} adminMode={adminMode} setAdminMode={setAdminMode} notice={notice} busy={busy} onSubmit={submitAuth} theme={theme} toggleTheme={toggleTheme} />;
-  if (user.role !== 'admin') return <UserHome user={user} api={api} signOut={signOut} notice={notice} setNotice={setNotice} theme={theme} toggleTheme={toggleTheme} />;
+  const authProps = { mode, setMode, adminMode, setAdminMode, notice, busy, onSubmit: submitAuth, theme, toggleTheme };
+  if (!token || !user) return <Auth {...authProps} />;
+  if (user.role !== 'admin') return <DoorTransition active={doorOpening} authProps={authProps}><UserHome user={user} api={api} signOut={signOut} notice={notice} setNotice={setNotice} theme={theme} toggleTheme={toggleTheme} /></DoorTransition>;
   const pending = users.filter(u => u.status === 'pending');
-  return <div className="app-shell">
+  return <DoorTransition active={doorOpening} authProps={authProps}><div className="app-shell">
     <aside className="sidebar"><div className="brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span><span className="beta">ADMIN</span></div>
       <div className="workspace"><div className="workspace-avatar">AD</div><div><b>Acme Workspace</b><small>Administrator</small></div><ChevronDown size={15}/></div>
       <p className="nav-label">WORKSPACE</p><nav>{[['Overview',LayoutDashboard],['Users',Users],['Activity logs',Activity]].map(([name,Icon])=><button key={name} onClick={()=>setTab(name)} className={`nav-item ${tab===name?'selected':''}`}><Icon size={17}/>{name}{name==='Users'&&pending.length>0&&<span className="nav-count">{pending.length}</span>}</button>)}</nav>
@@ -82,10 +88,12 @@ function App() {
       {tab==='Activity logs'&&<section className="panel full-table"><div className="panel-head"><div><h2>Activity log <span className="count-pill">{events.length}</span></h2><p>Account creations, approvals, logins, and profile changes</p></div><div className="table-tools"><button className="button button-outline"><Filter size={15}/> Filter</button><button className="button button-outline"><ArrowDownToLine size={15}/> Export</button></div></div><div className="table-wrap"><table><thead><tr><th>ACTION</th><th>USER</th><th>DETAIL</th><th>DATE & TIME</th></tr></thead><tbody>{events.map(e=><tr key={e.id}><td><EventBadge action={e.action}/></td><td><Person name={e.actor_name} email={e.actor_email}/></td><td className="detail-cell">{e.detail}</td><td>{dateText(e.created_at)}</td></tr>)}{!events.length&&<EmptyRow text="No activity has been recorded yet." cols={4}/>}</tbody></table></div></section>}
       <footer className="footer">© {new Date().getFullYear()} AccessDesk <span>•</span> Built for secure, thoughtful access management <a>Privacy</a><a>Support</a></footer>
       </section></main>{notice&&<div className="toast"><CheckCircle2 size={17}/>{notice}<button onClick={()=>setNotice('')}><X size={15}/></button></div>}
-  </div>;
+  </div></DoorTransition>;
 }
 
-function Auth({mode,setMode,adminMode,setAdminMode,notice,busy,onSubmit,theme,toggleTheme}) { return <div className="auth-page"><div className="auth-left"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="auth-pitch"><div className="hero-badge"><span/> ACCESS, WITH INTENTION</div><h1>A safer space<br/>starts <em>here.</em></h1><p>Thoughtful access management for teams that value trust, transparency, and people.</p><div className="hero-graphic"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="hero-center"><ShieldCheck size={34}/></div><span className="sparkle s1">✦</span><span className="sparkle s2">✧</span></div></div><div className="auth-left-footer"><span>DESIGNED FOR PEOPLE. BUILT FOR TRUST.</span><span><i/> SECURE BY DESIGN</span></div></div>
+function DoorTransition({active,authProps,children}) { return <div className="door-stage">{children}{active&&<div className="door-curtain" aria-hidden="true"><Auth {...authProps} doorOpening transitionOnly /></div>}</div>; }
+
+function Auth({mode,setMode,adminMode,setAdminMode,notice,busy,onSubmit,theme,toggleTheme,doorOpening=false,transitionOnly=false}) { return <div className={`auth-page${doorOpening?' door-opening':''}${transitionOnly?' transition-only':''}`}><div className="auth-left"><div className="auth-brand"><span className="brand-mark"><ShieldCheck size={20}/></span><span>access<span className="brand-light">desk</span></span></div><div className="auth-pitch"><div className="hero-badge"><span/> ACCESS, WITH INTENTION</div><h1>A safer space<br/>starts <em>here.</em></h1><p>Thoughtful access management for teams that value trust, transparency, and people.</p><div className="hero-graphic"><div className="orbit orbit-one"/><div className="orbit orbit-two"/><div className="hero-center"><ShieldCheck size={34}/></div><span className="sparkle s1">✦</span><span className="sparkle s2">✧</span></div></div><div className="auth-left-footer"><span>DESIGNED FOR PEOPLE. BUILT FOR TRUST.</span><span><i/> SECURE BY DESIGN</span></div></div>
   <div className="auth-right"><div className="auth-top"><ThemeButton theme={theme} onToggle={toggleTheme}/><span>Already have access?</span><button onClick={()=>{setMode(mode==='login'?'register':'login');setAdminMode(false)}}>{mode==='login'?'Create an account':'Sign in'}</button></div><div className="auth-form-wrap"><div className="mobile-brand"><span className="brand-mark"><ShieldCheck size={18}/></span>accessdesk</div><div className="form-kicker">{adminMode?'ADMINISTRATOR PORTAL':'YOUR WORKSPACE AWAITS'}</div><h2>{mode==='register'?'Create your account':adminMode?'Welcome, administrator':'Welcome back'}</h2><p className="form-intro">{mode==='register'?'Request access to your team’s workspace.':'Enter your details to access your workspace.'}</p><div className="auth-switch"><button className={!adminMode?'active':''} onClick={()=>setAdminMode(false)}><UserRound size={16}/> User sign in</button><button className={adminMode?'active':''} onClick={()=>setAdminMode(true)}><ShieldCheck size={16}/> Admin sign in</button></div><form onSubmit={onSubmit}>{mode==='register'&&<label>Full name<div className="input-wrap"><UserRound size={16}/><input name="name" placeholder="e.g. Alex Morgan" required minLength="2"/></div></label>}<label>Email address<div className="input-wrap"><span className="at-icon">@</span><input name="email" type="email" placeholder="you@company.com" required/></div></label><label>Password<div className="input-wrap"><LockKeyhole size={15}/><input name="password" type="password" placeholder={mode==='register'?'At least 8 characters':'Enter your password'} required minLength={mode==='register'?8:1}/></div></label>{mode==='login'&&<div className="form-options"><label className="remember"><input type="checkbox"/> Remember me</label><button type="button" className="link-button">Forgot password?</button></div>}<button className="button primary submit-btn" disabled={busy}>{busy?'Please wait…':mode==='register'?'Request access':'Sign in'}<ArrowRight size={16}/></button></form>{notice&&<div className="inline-notice">{notice}</div>}<div className="auth-divider"><span/> OR <span/></div><div className="approval-note"><span><Clock3 size={16}/></span><p><b>New to the workspace?</b><br/>Account requests are reviewed by an administrator before access is granted.</p></div><div className="auth-bottom"><span>© {new Date().getFullYear()} AccessDesk</span><button><CircleHelp size={14}/> Help center</button></div></div></div></div> }
 
 function UserHome({user,api,signOut,notice,setNotice,theme,toggleTheme,preview=false}) {
