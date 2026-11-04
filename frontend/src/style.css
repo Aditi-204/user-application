@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'DM Sans', sans-serif;
   color: #2b1e23;
   background: #f6f1ea;
   font-synthesis: none;
@@ -337,8 +337,8 @@ tbody tr:hover { background: #fcfcff; }
 
 /* Warm ivory and oxblood visual system */
 :root { color-scheme: light; }
-body { font-family: 'IBM Plex Sans', sans-serif; transition: background .2s ease,color .2s ease; }
-h1,h2,.brand,.auth-brand,.mobile-brand,.stat-number { font-family: 'Space Grotesk', sans-serif !important; }
+body { font-family: 'DM Sans', sans-serif; transition: background .2s ease,color .2s ease; }
+h1,h2,.brand,.auth-brand,.mobile-brand,.stat-number { font-family: 'Manrope', sans-serif !important; }
 .brand,.auth-brand { color: #321d25; }
 .brand-light { color: #937983; }
 .brand-mark { background: linear-gradient(145deg,#98495e,#681f38); box-shadow: 0 7px 18px #681f383b; }
@@ -707,7 +707,7 @@ td { font-size: 12px; }
 .admin-profile-modal { width: min(500px,100%); padding: 26px; border: 1px solid #ddcbb8; border-radius: 18px; background: #f2e7d8; box-shadow: 0 28px 80px #160b1060; }
 .modal-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 23px; }
 .modal-heading .eyebrow { margin-bottom: 6px; color: #8a5360; }
-.modal-heading h2 { margin: 0; color: #38262d; font: 700 24px 'Space Grotesk',sans-serif; }
+.modal-heading h2 { margin: 0; color: #38262d; font: 700 24px 'Manrope',sans-serif; }
 .admin-profile-modal form > label { display: block; margin: 17px 0; color: #59464c; font-size: 13px; font-weight: 700; }
 .admin-photo-editor { display: flex; align-items: center; gap: 18px; padding: 17px; border: 1px solid #ddcbb8; border-radius: 12px; background: #f6ecde; }
 .admin-photo-editor .member-avatar { width: 74px; height: 74px; font-size: 20px; }
@@ -724,3 +724,65 @@ td { font-size: 12px; }
 :root[data-theme="dark"] .admin-photo-editor p { color: #b7a4aa; }
 :root[data-theme="dark"] .admin-profile-trigger .member-avatar { border-color: #60404a; }
 :root[data-theme="dark"] .person-link { color: #e5aaba; }
+
+/* High contrast type refresh for the cream palette */
+:root:not([data-theme="dark"]) {
+  --ink: #21191c;
+  --muted: #3d3236;
+  color: #21191c;
+}
+:root:not([data-theme="dark"]) .crumb,
+:root:not([data-theme="dark"]) .crumb b,
+:root:not([data-theme="dark"]) .eyebrow,
+:root:not([data-theme="dark"]) .subheading,
+:root:not([data-theme="dark"]) .stat-top,
+:root:not([data-theme="dark"]) .stat-bottom,
+:root:not([data-theme="dark"]) .panel-head p,
+:root:not([data-theme="dark"]) .panel-foot,
+:root:not([data-theme="dark"]) th,
+:root:not([data-theme="dark"]) td,
+:root:not([data-theme="dark"]) .person b,
+:root:not([data-theme="dark"]) .person small,
+:root:not([data-theme="dark"]) .activity-copy b,
+:root:not([data-theme="dark"]) .activity-copy > span,
+:root:not([data-theme="dark"]) .activity-copy small,
+:root:not([data-theme="dark"]) .member-identity > div > p,
+:root:not([data-theme="dark"]) .avatar-editor-copy b,
+:root:not([data-theme="dark"]) .avatar-editor-copy p,
+:root:not([data-theme="dark"]) .form-intro,
+:root:not([data-theme="dark"]) .auth-top,
+:root:not([data-theme="dark"]) .auth-form-wrap form > label,
+:root:not([data-theme="dark"]) .remember,
+:root:not([data-theme="dark"]) .approval-note p,
+:root:not([data-theme="dark"]) .approval-note b,
+:root:not([data-theme="dark"]) .auth-bottom,
+:root:not([data-theme="dark"]) .auth-bottom button,
+:root:not([data-theme="dark"]) .empty-row,
+:root:not([data-theme="dark"]) .muted,
+:root:not([data-theme="dark"]) .footer,
+:root:not([data-theme="dark"]) .footer a { color: #30272b; }
+:root:not([data-theme="dark"]) .input-wrap input::placeholder { color: #5a4c50; }
+:root:not([data-theme="dark"]) .input-wrap input:disabled { color: #44383c; }
+.page-heading h1 { color: #21191c; font-size: 42px; font-weight: 800; letter-spacing: -1.7px; }
+.page-heading h1 em { color: #70243b; font-weight: 800; }
+.user-content .member-identity h1 { font-weight: 800; }
+.auth-form-wrap h2 { font-weight: 800; }
+.eyebrow { font-size: 12px; font-weight: 800; }
+.crumb,.subheading { font-size: 14px; }
+.stat-top,.panel-head p,.form-intro { font-size: 14px; }
+.stat-bottom,.panel-foot,.person small,.activity-copy > span { font-size: 12px; }
+th,.status,.event-badge { font-size: 11px; }
+td,.person b,.activity-copy b,.auth-form-wrap form > label { font-size: 13px; }
+.activity-copy small,.remember,.approval-note p,.approval-note b { font-size: 12px; }
+.button,.mini-action,.auth-switch button { font-size: 13px; font-weight: 700; }
+@media (max-width: 760px) {
+  .page-heading h1 { font-size: 31px; letter-spacing: -1px; }
+  .eyebrow { font-size: 11px; }
+  .subheading,.panel-head p,.form-intro { font-size: 12px; }
+  .stat-top { font-size: 11px; }
+  .stat-bottom { font-size: 10px; }
+  .panel-foot { font-size: 11px; }
+  th { font-size: 10px; }
+  td,.person b { font-size: 12px; }
+  .person small { font-size: 11px; }
+}
