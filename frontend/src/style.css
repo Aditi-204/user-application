@@ -815,3 +815,92 @@ td,.person b,.activity-copy b,.auth-form-wrap form > label { font-size: 13px; }
 :root[data-theme="dark"] .sidebar .nav-item.selected svg,
 :root[data-theme="dark"] .sidebar .nav-item:hover,
 :root[data-theme="dark"] .sidebar .nav-item:hover svg { color: #f0e5e7; }
+
+/* Contemporary admin workspace: quiet structure, rounded surfaces, no hard dividers */
+:root:not([data-theme="dark"]) .app-shell {
+  background-color: #e9dece;
+  background-image: radial-gradient(ellipse at 78% 0%,#f7ecdc 0,transparent 46%),linear-gradient(135deg,#e8dccb,#eee4d6 60%,#e4d6c5);
+}
+:root:not([data-theme="dark"]) .sidebar {
+  border-right: 0;
+  background: linear-gradient(180deg,#f0e5d6,#e9ddce);
+}
+:root:not([data-theme="dark"]) .topbar {
+  border-bottom: 0;
+  background: transparent;
+}
+:root:not([data-theme="dark"]) .page-content {
+  background-image: none;
+}
+.app-shell .page-content { padding-top: 42px; }
+.app-shell .page-heading { margin-bottom: 32px; }
+.app-shell .page-heading h1 { font-size: 44px; letter-spacing: -2px; }
+.app-shell .stats-grid { gap: 18px; margin-bottom: 24px; }
+:root:not([data-theme="dark"]) .app-shell .stat-card {
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(145deg,#f6ecdd,#f0e4d3);
+  box-shadow: 0 10px 28px #5a34220b, inset 0 1px #fff9f0;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.app-shell .stat-card:hover { transform: translateY(-3px); box-shadow: 0 15px 32px #5a34221a; }
+.app-shell .stat-icon { width: 42px; height: 42px; border-radius: 13px; }
+.app-shell .stat-number { margin: 21px 0 14px; font-size: 34px; }
+:root:not([data-theme="dark"]) .app-shell .panel {
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(145deg,#f4e9da,#efe3d2);
+  box-shadow: 0 12px 32px #52311d0c, inset 0 1px #fff9f0;
+}
+.app-shell .admin-table-section { margin: 20px 0; }
+.app-shell .admin-table-section .panel-head,
+.app-shell .full-table .panel-head { padding: 25px 27px 17px; }
+.app-shell .panel-head h2 { font-size: 19px; letter-spacing: -.3px; }
+.app-shell .panel-head p { margin-top: 7px; }
+.app-shell .full-table table { border-collapse: separate; border-spacing: 0 7px; }
+.app-shell .full-table thead { background: transparent; }
+.app-shell .full-table th { border: 0; background: transparent; padding-top: 9px; padding-bottom: 8px; }
+.app-shell .full-table td { border: 0; background: #f8f0e5; padding-top: 14px; padding-bottom: 14px; transition: background .16s ease; }
+.app-shell .full-table tbody tr:hover td { background: #f1e4d4; }
+.app-shell .full-table tbody td:first-child { border-radius: 12px 0 0 12px; }
+.app-shell .full-table tbody td:last-child { border-radius: 0 12px 12px 0; }
+.app-shell .full-table tbody tr:last-child td { border-bottom: 0; }
+.app-shell .activity-table { border-spacing: 0 7px; }
+.app-shell .activity-table th { letter-spacing: 1px; }
+.app-shell .event-badge { padding: 7px 10px; border-radius: 999px; }
+.app-shell .mini-action { min-height: 34px; padding-right: 11px; padding-left: 11px; border-radius: 9px; }
+.app-shell .mini-action.reject { background: transparent; }
+.app-shell .mini-action.reject:hover { background: #f4e2e4; }
+:root:not([data-theme="dark"]) .app-shell .insight-card {
+  margin-top: 22px;
+  padding: 20px 23px;
+  border: 0;
+  border-radius: 18px;
+  background: linear-gradient(110deg,#ead7d9,#f2e7d6 74%);
+  box-shadow: 0 12px 30px #52311d0c;
+}
+.app-shell .insight-title { font-size: 14px; }
+.app-shell .insight-card p { font-size: 12px; }
+.app-shell .nav-item { border-radius: 12px; }
+:root:not([data-theme="dark"]) .app-shell .nav-item.selected { background: #e9d5d9; box-shadow: inset 0 0 0 1px #dec4ca; }
+:root:not([data-theme="dark"]) .app-shell .nav-item:hover { background: #f3e8dc; }
+:root[data-theme="dark"] .app-shell { background-image: radial-gradient(ellipse at 78% 0%,#33232a 0,transparent 46%); }
+:root[data-theme="dark"] .sidebar { border-right: 0; background: linear-gradient(180deg,#21191e,#1c161a); }
+:root[data-theme="dark"] .topbar { border-bottom: 0; background: transparent; }
+:root[data-theme="dark"] .page-content { background-image: none; }
+:root[data-theme="dark"] .app-shell .stat-card,
+:root[data-theme="dark"] .app-shell .panel { border: 0; background: linear-gradient(145deg,#251b20,#21191e); box-shadow: 0 12px 32px #00000022,inset 0 1px #ffffff07; }
+:root[data-theme="dark"] .app-shell .full-table td { background: #2a2025; }
+:root[data-theme="dark"] .app-shell .full-table tbody tr:hover td { background: #35262d; }
+:root[data-theme="dark"] .app-shell .nav-item.selected { box-shadow: inset 0 0 0 1px #68404d; }
+:root[data-theme="dark"] .app-shell .nav-item:hover { background: #2a2025; }
+:root[data-theme="dark"] .app-shell .insight-card { border: 0; box-shadow: 0 12px 30px #00000022; }
+@media (max-width: 760px) {
+  .app-shell .page-content { padding-top: 26px; }
+  .app-shell .page-heading { margin-bottom: 22px; }
+  .app-shell .page-heading h1 { font-size: 32px; }
+  .app-shell .stats-grid { gap: 11px; }
+  .app-shell .stat-card { border-radius: 14px; }
+  .app-shell .admin-table-section .panel-head,
+  .app-shell .full-table .panel-head { padding: 19px 16px 13px; }
+}
