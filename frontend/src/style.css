@@ -904,3 +904,65 @@ td,.person b,.activity-copy b,.auth-form-wrap form > label { font-size: 13px; }
   .app-shell .admin-table-section .panel-head,
   .app-shell .full-table .panel-head { padding: 19px 16px 13px; }
 }
+
+/* Remove the sidebar layout; primary navigation now sits in the header. */
+.app-shell { display: block; }
+.app-shell .main-area { margin-left: 0; width: 100%; }
+.app-shell .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  height: 82px;
+  gap: 20px;
+  padding: 0 clamp(22px,4vw,64px);
+  background: color-mix(in srgb, var(--canvas) 90%, transparent);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 8px 28px #38201908;
+}
+.admin-header-left { display: flex; min-width: 0; align-items: center; gap: clamp(20px,4vw,58px); }
+.admin-header-left .brand { flex: none; }
+.admin-top-nav { display: flex; align-items: center; gap: 7px; }
+.admin-top-nav button { position: relative; display: inline-flex; min-height: 42px; align-items: center; gap: 8px; padding: 0 13px; border: 0; border-radius: 12px; background: transparent; color: #3d3236; font: 700 13px 'Manrope',sans-serif; transition: background .18s ease,color .18s ease,transform .18s ease; }
+.admin-top-nav button:hover { transform: translateY(-1px); background: #f3e8dc; color: #21191c; }
+.admin-top-nav button.selected { background: #ead5d9; color: #21191c; box-shadow: 0 5px 16px #70243b12; }
+.admin-top-nav button b { display: grid; min-width: 20px; height: 20px; place-items: center; padding: 0 5px; border-radius: 999px; background: #72263f; color: #fff8f1; font: 700 10px 'DM Sans',sans-serif; }
+.app-shell .top-actions { flex: none; }
+:root[data-theme="dark"] .app-shell .topbar { background: #171216e8; box-shadow: 0 8px 28px #00000018; }
+:root[data-theme="dark"] .admin-top-nav button { color: #dbcbd0; }
+:root[data-theme="dark"] .admin-top-nav button:hover { background: #2a2025; color: #f4e9e9; }
+:root[data-theme="dark"] .admin-top-nav button.selected { background: #432832; color: #f4e9e9; box-shadow: 0 5px 16px #00000022; }
+@media (max-width: 900px) {
+  .app-shell .topbar { padding: 0 20px; }
+  .admin-header-left { gap: 18px; }
+  .admin-top-nav { gap: 3px; }
+  .admin-top-nav button { gap: 6px; padding: 0 9px; font-size: 12px; }
+}
+@media (max-width: 680px) {
+  .app-shell .topbar { height: auto; min-height: 68px; flex-wrap: wrap; gap: 8px; padding: 11px 15px 10px; }
+  .admin-header-left { flex: 1; justify-content: space-between; gap: 8px; }
+  .admin-header-left .brand { font-size: 16px; }
+  .admin-header-left .brand-mark { width: 30px; height: 30px; }
+  .admin-header-left .beta { display: none; }
+  .admin-top-nav button { min-height: 37px; padding: 0 8px; font-size: 11px; }
+  .admin-top-nav button svg { width: 14px; }
+  .app-shell .top-actions { gap: 8px; }
+}
+@media (max-width: 440px) {
+  .app-shell .topbar { align-items: center; }
+  .admin-header-left { flex-basis: 100%; }
+  .admin-top-nav { flex: 1; justify-content: flex-end; }
+  .admin-top-nav button { gap: 5px; padding: 0 6px; font-size: 10px; }
+  .app-shell .top-actions { position: absolute; top: 10px; right: 14px; }
+  .admin-header-left .brand { margin-right: auto; }
+}
+@media (max-width: 680px) {
+  .app-shell .topbar { display: grid; grid-template-columns: minmax(0,1fr) auto; grid-template-areas: "brand actions" "nav nav"; align-items: center; }
+  .admin-header-left { display: contents; }
+  .admin-header-left .brand { grid-area: brand; }
+  .admin-top-nav { grid-area: nav; width: 100%; justify-content: space-between; }
+  .app-shell .top-actions { grid-area: actions; position: static; justify-self: end; margin: 0; }
+}
+@media (max-width: 440px) {
+  .app-shell .topbar { flex-direction: initial; }
+  .admin-top-nav button { font-size: 11px; }
+}
