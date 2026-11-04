@@ -50,6 +50,7 @@ class LoginInput(BaseModel):
 
 class ProfileInput(BaseModel):
     name: str = Field(min_length=2, max_length=80)
+    email: EmailStr
     avatar_data: str | None = Field(default=None, max_length=1_400_000)
 
 
@@ -90,6 +91,7 @@ def record(action, actor, target=None, detail=""):
     activities.insert_one({"action": action, "actor_id": str(actor["_id"]),
                            "actor_name": actor["name"], "actor_email": actor["email"],
                            "target_id": str(target["_id"]) if target else None,
+                           "target_name": target.get("name") if target else None,
                            "target_email": target["email"] if target else None,
                            "detail": detail, "created_at": now()})
 
@@ -177,23 +179,38 @@ def me(user=Depends(current_user)):
 @app.patch("/api/profile")
 def update_profile(body: ProfileInput, user=Depends(current_user)):
     name = body.name.strip()
-    updates = {"name": name}
+    email = body.email.lower().strip()
+    updates = {"name": name, "email": email}
     unset = {}
+    changed = []
+    if name != user["name"]:
+        changed.append("name")
+    if email != user["email"]:
+        changed.append("email")
     avatar_changed = "avatar_data" in body.__fields_set__
     if avatar_changed:
         if body.avatar_data is None:
+            avatar_changed = user.get("avatar_data") is not None
             unset["avatar_data"] = ""
         else:
             validate_avatar(body.avatar_data)
+            avatar_changed = body.avatar_data != user.get("avatar_data")
             updates["avatar_data"] = body.avatar_data
+    if avatar_changed:
+        changed.append("profile photo")
+    if not changed:
+        return public_user(user, include_avatar=True)
     update_doc = {"$set": updates}
     if unset:
         update_doc["$unset"] = unset
-    users.update_one({"_id": user["_id"]}, update_doc)
+    try:
+        users.update_one({"_id": user["_id"]}, update_doc)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail="An account with this email already exists")
     user.update(updates)
     for key in unset:
         user.pop(key, None)
-    record("profile_updated", user, user, "Profile details updated" if avatar_changed else "Profile name updated")
+    record("profile_updated", user, user, f"Updated: {', '.join(changed)}")
     return public_user(user, include_avatar=True)
 
 
@@ -235,6 +252,7 @@ def activity_log(limit: int = 100, admin=Depends(admin_user)):
     limit = max(1, min(limit, 500))
     return [{"id": str(a["_id"]), "action": a["action"], "actor_name": a["actor_name"],
              "actor_email": a["actor_email"], "target_email": a.get("target_email"),
+             "target_name": a.get("target_name"),
              "detail": a.get("detail", ""), "created_at": a["created_at"].isoformat()}
             for a in activities.find().sort("created_at", -1).limit(limit)]
 
