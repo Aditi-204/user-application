@@ -237,7 +237,7 @@ def overview(admin=Depends(admin_user)):
     return {"pending": users.count_documents({"role": "user", "status": "pending"}),
             "approved": users.count_documents({"role": "user", "status": "approved"}),
             "rejected": users.count_documents({"role": "user", "status": "rejected"}),
-            "logins": activities.count_documents({"action": "login"})}
+            "logins": activities.count_documents({"action": "login", "actor_email": {"$ne": ADMIN_EMAIL}})}
 
 
 @app.get("/api/admin/users")
@@ -262,11 +262,13 @@ def decide_user(user_id: str, decision: Literal["approve", "reject"], admin=Depe
 @app.get("/api/admin/activity")
 def activity_log(limit: int = 100, admin=Depends(admin_user)):
     limit = max(1, min(limit, 500))
-    return [{"id": str(a["_id"]), "action": a["action"], "actor_name": a["actor_name"],
+    query = {"$nor": [{"actor_email": ADMIN_EMAIL, "target_email": ADMIN_EMAIL}]}
+    return [{"id": str(a["_id"]), "action": a["action"], "actor_id": a.get("actor_id"),
+             "target_id": a.get("target_id"), "actor_name": a["actor_name"],
              "actor_email": a["actor_email"], "target_email": a.get("target_email"),
              "target_name": a.get("target_name"),
              "detail": a.get("detail", ""), "created_at": a["created_at"].isoformat()}
-            for a in activities.find().sort("created_at", -1).limit(limit)]
+            for a in activities.find(query).sort("created_at", -1).limit(limit)]
 
 
 @app.get("/api/admin/ai-summary")
@@ -274,7 +276,7 @@ def ai_summary(admin=Depends(admin_user)):
     """A local, data-grounded starter summary; replace with an LLM provider if required."""
     pending = users.count_documents({"role": "user", "status": "pending"})
     approved = users.count_documents({"role": "user", "status": "approved"})
-    recent = list(activities.find().sort("created_at", -1).limit(100))
+    recent = list(activities.find({"$nor": [{"actor_email": ADMIN_EMAIL, "target_email": ADMIN_EMAIL}]}).sort("created_at", -1).limit(100))
     counts = {}
     for item in recent:
         counts[item["action"]] = counts.get(item["action"], 0) + 1

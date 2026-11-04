@@ -690,3 +690,37 @@ td { font-size: 12px; }
   .admin-table-section th,
   .admin-table-section td { padding: 12px 11px; }
 }
+
+/* Admin account controls and drill-down activity */
+.sidebar .nav-label { margin-top: 42px; }
+.admin-profile-trigger { display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: transparent; }
+.admin-profile-trigger .member-avatar { width: 39px; height: 39px; border-color: #ead9d4; cursor: pointer; }
+.admin-profile-trigger:hover .member-avatar { box-shadow: 0 0 0 3px #72263f20; }
+.person-link { display: inline-flex; align-items: center; gap: 8px; padding: 0; border: 0; background: transparent; color: #8a5360; text-align: left; }
+.person-link .person { transition: transform .16s ease; }
+.person-link > svg { opacity: 0; transition: opacity .16s ease, transform .16s ease; }
+.person-link:hover .person { transform: translateX(2px); }
+.person-link:hover > svg { opacity: 1; transform: translateX(2px); }
+.user-activity-heading { align-items: center; }
+.user-activity-heading .back-arrow { transform: rotate(180deg); }
+.modal-backdrop { position: fixed; z-index: 1200; inset: 0; display: grid; place-items: center; padding: 20px; background: #21151bb5; backdrop-filter: blur(5px); }
+.admin-profile-modal { width: min(500px,100%); padding: 26px; border: 1px solid #ddcbb8; border-radius: 18px; background: #f2e7d8; box-shadow: 0 28px 80px #160b1060; }
+.modal-heading { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 23px; }
+.modal-heading .eyebrow { margin-bottom: 6px; color: #8a5360; }
+.modal-heading h2 { margin: 0; color: #38262d; font: 700 24px 'Space Grotesk',sans-serif; }
+.admin-profile-modal form > label { display: block; margin: 17px 0; color: #59464c; font-size: 13px; font-weight: 700; }
+.admin-photo-editor { display: flex; align-items: center; gap: 18px; padding: 17px; border: 1px solid #ddcbb8; border-radius: 12px; background: #f6ecde; }
+.admin-photo-editor .member-avatar { width: 74px; height: 74px; font-size: 20px; }
+.admin-photo-editor b { color: #38262d; font-size: 14px; }
+.admin-photo-editor p { margin: 5px 0 11px; color: #826e74; font-size: 12px; }
+.admin-photo-editor .photo-remove { margin-left: 10px; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+:root[data-theme="dark"] .admin-profile-modal { border-color: #503740; background: #21191e; }
+:root[data-theme="dark"] .modal-heading h2,
+:root[data-theme="dark"] .admin-photo-editor b { color: #f0e5e7; }
+:root[data-theme="dark"] .modal-heading .eyebrow { color: #e5aaba; }
+:root[data-theme="dark"] .admin-profile-modal form > label { color: #c1adb3; }
+:root[data-theme="dark"] .admin-photo-editor { border-color: #49333b; background: #2b2026; }
+:root[data-theme="dark"] .admin-photo-editor p { color: #b7a4aa; }
+:root[data-theme="dark"] .admin-profile-trigger .member-avatar { border-color: #60404a; }
+:root[data-theme="dark"] .person-link { color: #e5aaba; }
