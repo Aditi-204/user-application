@@ -564,3 +564,109 @@ tbody tr:hover { background: #fcf8f4; }
   .door-curtain .auth-left,
   .door-curtain .auth-right { transition: none; }
 }
+
+/* Softer, deeper cream palette with clearer type and roomier user screens */
+:root:not([data-theme="dark"]) body { background: #e2d4c1; color: #39252d; }
+:root:not([data-theme="dark"]) .app-shell,
+:root:not([data-theme="dark"]) .user-page { background-color: #e2d4c1; }
+:root:not([data-theme="dark"]) .page-content { background-color: #e9ddcc; }
+:root:not([data-theme="dark"]) .sidebar,
+:root:not([data-theme="dark"]) .topbar,
+:root:not([data-theme="dark"]) .stat-card,
+:root:not([data-theme="dark"]) .panel,
+:root:not([data-theme="dark"]) .user-top,
+:root:not([data-theme="dark"]) .auth-right,
+:root:not([data-theme="dark"]) .auth-page { background-color: #f0e4d2; }
+:root:not([data-theme="dark"]) .workspace,
+:root:not([data-theme="dark"]) .input-wrap,
+:root:not([data-theme="dark"]) .button-outline,
+:root:not([data-theme="dark"]) .theme-toggle,
+:root:not([data-theme="dark"]) .auth-switch button.active,
+:root:not([data-theme="dark"]) .hero-badge { background-color: #f5eadb; }
+:root:not([data-theme="dark"]) .profile-mini { background-color: #f0e4d2; }
+:root:not([data-theme="dark"]) .auth-switch { background-color: #e5d6c2; }
+:root:not([data-theme="dark"]) .avatar-editor { background: #f5eadb; }
+:root:not([data-theme="dark"]) .sidebar,
+:root:not([data-theme="dark"]) .topbar,
+:root:not([data-theme="dark"]) .user-top { border-color: #d8c6b3; }
+:root:not([data-theme="dark"]) .stat-card,
+:root:not([data-theme="dark"]) .panel { border-color: #ddcbb8; }
+:root:not([data-theme="dark"]) .input-wrap,
+:root:not([data-theme="dark"]) .button-outline,
+:root:not([data-theme="dark"]) .theme-toggle { border-color: #d7c3b2; }
+:root:not([data-theme="dark"]) th { background: #e9dccb; }
+:root:not([data-theme="dark"]) tbody tr:hover { background: #f4e9da; }
+:root:not([data-theme="dark"]) .insight-card { border-color: #ddc4c4; background: linear-gradient(105deg,#ead9d6,#f1e5d5); }
+:root:not([data-theme="dark"]) .approval-note { border-color: #dec9c8; background: #eee0d7; }
+:root:not([data-theme="dark"]) .approval-note > span { background: #e5d0d0; }
+
+/* Raise small UI copy across the login and admin views for easier reading. */
+.eyebrow { font-size: 11px; }
+.subheading { font-size: 14px; }
+.button { font-size: 12px; }
+.stat-top { font-size: 13px; }
+.stat-bottom { font-size: 11px; }
+.panel-head h2 { font-size: 15px; }
+.panel-head p { font-size: 12px; }
+th { font-size: 10px; }
+td { font-size: 12px; }
+.person b,.activity-copy b { font-size: 12px; }
+.person small { font-size: 11px; }
+.status,.mini-action,.event-badge { font-size: 10px; }
+.panel-foot,.text-button,.help-card button { font-size: 11px; }
+.activity-copy > span { font-size: 11px; }
+.activity-copy small { font-size: 10px; }
+.stat-card { padding: 21px 22px; }
+
+/* Larger account profile surface and form controls. */
+.user-content { max-width: 940px; margin: 64px auto; }
+.user-content .member-identity h1 { font-size: 42px; }
+.member-identity > div > p { font-size: 15px; }
+.profile-card { min-height: 390px; padding-bottom: 28px; }
+.profile-card .panel-head { padding: 27px 30px 22px; }
+.profile-card .panel-head h2 { font-size: 19px; }
+.profile-card .panel-head p { font-size: 13px; }
+.profile-form { max-width: 620px; padding: 8px 30px 24px; }
+.profile-form > label { margin-bottom: 19px; font-size: 13px; }
+.profile-form .input-wrap { height: 50px; }
+.profile-form .input-wrap input { font-size: 13px; }
+.avatar-editor { padding: 20px; }
+.avatar-editor-copy b { font-size: 14px; }
+.avatar-editor-copy p { font-size: 12px; }
+.delete-link { margin-left: 30px; font-size: 12px; }
+.profile-card > .status { margin-right: 28px; }
+
+/* The sign-in form gets more space and larger reading sizes. */
+.auth-form-wrap { width: min(440px,calc(100% - 56px)); }
+.auth-form-wrap h2 { font-size: 31px; }
+.form-kicker { font-size: 10px; }
+.form-intro { font-size: 14px; }
+.auth-switch { height: 48px; }
+.auth-switch button { font-size: 12px; }
+.auth-form-wrap form > label { font-size: 13px; }
+.auth-form-wrap .input-wrap { height: 49px; }
+.auth-form-wrap .input-wrap input { font-size: 13px; }
+.remember,.form-options .link-button { font-size: 11px; }
+.submit-btn { height: 49px; font-size: 13px; }
+.approval-note p,.approval-note b { font-size: 12px; }
+.auth-top { font-size: 12px; }
+.auth-top button { font-size: 12px; }
+
+@media (max-width: 760px) {
+  .user-content { margin: 38px auto; padding: 0 18px; }
+  .user-content .member-identity h1 { font-size: 30px; }
+  .member-identity > div > p { font-size: 13px; }
+  .profile-card .panel-head { padding: 20px 18px; }
+  .profile-form { padding: 8px 18px 20px; }
+  .profile-card > .status { margin-right: 16px; }
+  .delete-link { margin-left: 18px; }
+  .auth-form-wrap { width: min(430px,calc(100% - 42px)); }
+  .auth-form-wrap h2 { font-size: 27px; }
+  .form-intro { font-size: 13px; }
+  .auth-form-wrap form > label { font-size: 12px; }
+  .panel-head h2 { font-size: 13px; }
+  .panel-head p { font-size: 10px; }
+  .stat-top { font-size: 11px; }
+  .stat-bottom { font-size: 10px; }
+  td { font-size: 11px; }
+}
