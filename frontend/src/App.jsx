@@ -53,7 +53,7 @@ function App() {
         const result = await api('/auth/register', { method: 'POST', body: JSON.stringify({ name: form.get('name'), email: form.get('email'), password: form.get('password') }) });
         setNotice(result.message); setMode('login');
       } else {
-        const result = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email: form.get('email'), password: form.get('password') }) });
+        const result = await api('/auth/login', { method: 'POST', body: JSON.stringify({ email: form.get('email'), password: form.get('password'), admin: adminMode }) });
         if (adminMode && result.user.role !== 'admin') throw new Error('This account does not have administrator access.');
         if (!adminMode && result.user.role === 'admin') throw new Error('Use the administrator sign-in option for this account.');
         localStorage.setItem('accessdesk_token', result.token); localStorage.setItem('accessdesk_user', JSON.stringify(result.user));

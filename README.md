@@ -16,4 +16,4 @@ A starter user registration and admin approval app. Users register and remain pe
 4. Start the API from the `backend` folder with `python -m uvicorn app:app --reload`.
 5. In `frontend`, run `npm install` and `npm run dev`.
 
-The admin account is initialized from `ADMIN_EMAIL` and `ADMIN_PASSWORD` when the API starts. This is a learning project starter; before deployment, add email verification, rate limiting, HTTPS, secret management, and security review.
+The admin account is initialized from `ADMIN_EMAIL` and `ADMIN_PASSWORD` when the API starts. Local defaults are `Aditi.admin@gmail.com` and `aditi.admin`. Admin sign-in is restricted to that configured account; regular user accounts cannot open the admin dashboard. Change these defaults and use managed secrets before deployment.

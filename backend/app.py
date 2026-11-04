@@ -19,6 +19,8 @@ load_dotenv()
 MONGO_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
 DB_NAME = os.getenv("MONGODB_DATABASE", "accessdesk")
 JWT_SECRET = os.getenv("JWT_SECRET", "development-only-change-me")
+ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "Aditi.admin@gmail.com").strip().lower()
+ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "aditi.admin")
 ALGORITHM = "HS256"
 TOKEN_MINUTES = 60 * 12
 pwd = CryptContext(schemes=["pbkdf2_sha256"], deprecated="auto", pbkdf2_sha256__rounds=600000)
@@ -46,6 +48,7 @@ class RegisterInput(BaseModel):
 class LoginInput(BaseModel):
     email: EmailStr
     password: str
+    admin: bool = False
 
 
 class ProfileInput(BaseModel):
@@ -115,7 +118,7 @@ def current_user(credentials: HTTPAuthorizationCredentials = Depends(bearer)):
 
 
 def admin_user(user=Depends(current_user)):
-    if user["role"] != "admin":
+    if user["role"] != "admin" or user["email"] != ADMIN_EMAIL:
         raise HTTPException(status_code=403, detail="Admin access required")
     return user
 
@@ -124,12 +127,17 @@ def admin_user(user=Depends(current_user)):
 def initialize():
     users.create_index("email", unique=True)
     activities.create_index("created_at")
-    email = os.getenv("ADMIN_EMAIL", "admin@example.com").strip().lower()
-    password = os.getenv("ADMIN_PASSWORD")
-    if password and not users.find_one({"email": email}):
+    email = ADMIN_EMAIL
+    admin = users.find_one({"email": email})
+    if not admin:
         users.insert_one({"name": "Administrator", "email": email,
-                          "password_hash": pwd.hash(password), "role": "admin",
+                          "password_hash": pwd.hash(ADMIN_PASSWORD), "role": "admin",
                           "status": "approved", "created_at": now()})
+    else:
+        updates = {"role": "admin", "status": "approved"}
+        if not pwd.verify(ADMIN_PASSWORD, admin["password_hash"]):
+            updates["password_hash"] = pwd.hash(ADMIN_PASSWORD)
+        users.update_one({"_id": admin["_id"]}, {"$set": updates})
 
 
 @app.get("/api/health")
@@ -163,6 +171,10 @@ def login(body: LoginInput):
     user = users.find_one({"email": body.email.lower().strip()})
     if not user or not pwd.verify(body.password, user["password_hash"]):
         raise HTTPException(status_code=401, detail="Email or password is incorrect")
+    if body.admin and (user["email"] != ADMIN_EMAIL or user["role"] != "admin"):
+        raise HTTPException(status_code=403, detail="Administrator credentials are not valid")
+    if not body.admin and user["role"] == "admin":
+        raise HTTPException(status_code=403, detail="Use the administrator sign-in option for this account.")
     if user["status"] == "pending":
         raise HTTPException(status_code=403, detail="Your registration is waiting for admin approval.")
     if user["status"] == "rejected":
