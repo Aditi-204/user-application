@@ -177,7 +177,7 @@ tbody tr:hover { background: #fcfcff; }
 .auth-left { position: relative; display: flex; overflow: hidden; flex-direction: column; padding: 34px clamp(32px,6vw,88px); background: radial-gradient(circle at 86% 87%,#b9627955,transparent 34%),linear-gradient(145deg,#32131f,#4a1b2c 58%,#60273b); color: #fff; }
 .auth-left:before,.auth-left:after { position: absolute; width: 400px; height: 400px; border: 1px solid #ffffff16; border-radius: 50%; content: ''; }
 .auth-left:before { box-shadow: 0 0 0 22px #ffffff05,0 0 0 44px #ffffff04; }
-.auth-left { background-image: linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(circle at 86% 87%,#b9627955,transparent 34%),linear-gradient(145deg,#32131f,#4a1b2c 58%,#60273b); background-size: 34px 34px,34px 34px,auto,auto; }
+.auth-left { background-image: radial-gradient(circle at 86% 87%,#b9627955,transparent 34%),linear-gradient(145deg,#32131f,#4a1b2c 58%,#60273b); }
 .auth-left:before { right: -185px; bottom: -118px; }
 .auth-left:after { right: -145px; bottom: -78px; }
 .auth-left .auth-brand { z-index: 1; color: #fff; }
@@ -342,7 +342,7 @@ h1,h2,.brand,.auth-brand,.mobile-brand,.stat-number { font-family: 'Manrope', sa
 .brand,.auth-brand { color: #321d25; }
 .brand-light { color: #937983; }
 .brand-mark { background: linear-gradient(145deg,#98495e,#681f38); box-shadow: 0 7px 18px #681f383b; }
-.app-shell,.user-page { background-color: #f6f1ea; background-image: linear-gradient(#70273a08 1px,transparent 1px),linear-gradient(90deg,#70273a08 1px,transparent 1px); background-size: 32px 32px; }
+.app-shell,.user-page { background-color: #f6f1ea; background-image: none; }
 .sidebar,.topbar,.stat-card,.panel,.user-top,.auth-right { background-color: #fffdfa; }
 .sidebar { border-right-color: #e6d9d5; }
 .topbar,.user-top { border-color: #e7dcd7; }
@@ -370,7 +370,7 @@ tbody tr:hover { background: #fcf8f4; }
 .insight-icon { background: #ead5db; color: #70243b; }
 .insight-title { color: #5d2c3c; }
 .insight-title span { background: #ead5db; color: #70243b; }
-.auth-left { background-image: linear-gradient(#ffffff08 1px,transparent 1px),linear-gradient(90deg,#ffffff08 1px,transparent 1px),radial-gradient(circle at 86% 87%,#c6788b55,transparent 34%),linear-gradient(145deg,#30111e,#4c1a2d 58%,#722a43); }
+.auth-left { background-image: radial-gradient(circle at 86% 87%,#c6788b55,transparent 34%),linear-gradient(145deg,#30111e,#4c1a2d 58%,#722a43); }
 .auth-left .brand-mark { background: linear-gradient(145deg,#c47788,#863249); }
 .auth-pitch h1 em { color: #edb8c3; }
 .hero-center { background: linear-gradient(145deg,#b35d73,#76253e); }
@@ -392,7 +392,7 @@ tbody tr:hover { background: #fcf8f4; }
 :root[data-theme="dark"] { color-scheme: dark; --canvas: #171216; --surface: #21191e; --line: #3d2c33; --ink: #f3e9e8; --muted: #b49da4; --purple: #d59aaa; --purple-dark: #e4afbc; --lavender: #3d252f; }
 :root[data-theme="dark"] body { background: #171216; color: #f1e8e8; }
 :root[data-theme="dark"] .app-shell,
-:root[data-theme="dark"] .user-page { background-color: #171216; background-image: linear-gradient(#e5a7b108 1px,transparent 1px),linear-gradient(90deg,#e5a7b108 1px,transparent 1px); }
+:root[data-theme="dark"] .user-page { background-color: #171216; background-image: none; }
 :root[data-theme="dark"] .sidebar,
 :root[data-theme="dark"] .topbar,
 :root[data-theme="dark"] .stat-card,
@@ -457,7 +457,7 @@ tbody tr:hover { background: #fcf8f4; }
 :root[data-theme="dark"] .primary { border-color: #8b3d55; background: #80364d; color: #fff7f7; }
 :root[data-theme="dark"] .primary:hover { background: #9a4a61; }
 :root[data-theme="dark"] .auth-pitch h1 { color: #fff7f7; }
-:root[data-theme="dark"] .auth-left { background-image: linear-gradient(#ffffff09 1px,transparent 1px),linear-gradient(90deg,#ffffff09 1px,transparent 1px),radial-gradient(circle at 86% 87%,#bd718555,transparent 34%),linear-gradient(145deg,#260d18,#421629 58%,#64243b); }
+:root[data-theme="dark"] .auth-left { background-image: radial-gradient(circle at 86% 87%,#bd718555,transparent 34%),linear-gradient(145deg,#260d18,#421629 58%,#64243b); }
 :root[data-theme="dark"] .float-card { border-color: #503740; background: #2b2026; }
 :root[data-theme="dark"] .float-card b { color: #f0e4e6; }
 :root[data-theme="dark"] .float-card small { color: #b49da4; }
