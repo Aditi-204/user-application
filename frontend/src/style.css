@@ -966,3 +966,5 @@ td,.person b,.activity-copy b,.auth-form-wrap form > label { font-size: 13px; }
   .app-shell .topbar { flex-direction: initial; }
   .admin-top-nav button { font-size: 11px; }
 }
+.resend-verification { margin: 10px 0 0; padding: 0; border: 0; background: transparent; color: #70243b; font: 700 12px 'Manrope',sans-serif; text-decoration: underline; text-underline-offset: 3px; }
+:root[data-theme="dark"] .resend-verification { color: #e5aaba; }
