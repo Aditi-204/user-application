@@ -75,6 +75,18 @@ class SecurityConfigurationTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 api.validate_security_config()
 
+    def test_requested_password_is_allowed_for_development(self):
+        with patch.object(api, "APP_ENV", "development"), patch.object(api, "ADMIN_PASSWORD", "admin.aditi"):
+            api.validate_security_config()
+
+    def test_production_rejects_short_admin_password(self):
+        with patch.object(api, "APP_ENV", "production"), \
+             patch.object(api, "ADMIN_PASSWORD", "admin.aditi"), \
+             patch.object(api, "SMTP_HOST", "smtp.example.com"), \
+             patch.object(api, "SMTP_FROM", "accessdesk@example.com"):
+            with self.assertRaises(RuntimeError):
+                api.validate_security_config()
+
 
 class EmailVerificationTests(unittest.TestCase):
     def test_registration_stores_only_a_hashed_verification_token(self):

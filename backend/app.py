@@ -132,8 +132,9 @@ def now():
 def validate_security_config():
     if len(JWT_SECRET) < 32:
         raise RuntimeError("Set JWT_SECRET to a random value at least 32 characters long in backend/.env")
-    if len(ADMIN_PASSWORD) < 16:
-        raise RuntimeError("Set ADMIN_PASSWORD to at least 16 characters in backend/.env")
+    minimum_admin_password_length = 16 if APP_ENV == "production" else 8
+    if len(ADMIN_PASSWORD) < minimum_admin_password_length:
+        raise RuntimeError(f"Set ADMIN_PASSWORD to at least {minimum_admin_password_length} characters in backend/.env")
     if APP_ENV == "production" and (not SMTP_HOST or not SMTP_FROM):
         raise RuntimeError("Configure SMTP_HOST and SMTP_FROM when APP_ENV=production")
 
