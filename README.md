@@ -18,7 +18,7 @@ A starter user registration and admin approval app. Users register and remain pe
 
 The admin account is initialized from `ADMIN_EMAIL` and `ADMIN_PASSWORD` when the API starts. `ADMIN_EMAIL` defaults to `Aditi.admin@gmail.com`; set a private admin password in `.env`. The admin password is never stored in source control. Admin sign-in is restricted to that configured account.
 
-New user registrations must verify their email before they appear in the admin approval queue. Configure `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, and `SMTP_FROM` to send verification links. When `APP_ENV=development` and SMTP is not configured, the API prints a local verification link in its console. Set `APP_ENV=production` to require SMTP delivery.
+New user registrations appear immediately in the admin approval queue. Email verification is not used. Users can sign in after an administrator approves their request.
 
 Authentication endpoints have process-local rate limits. For multi-worker or multi-instance deployments, move rate-limit storage to a shared service such as Redis. Before deployment, also configure HTTPS, managed secrets, backups, monitoring, and a production MongoDB connection.
 

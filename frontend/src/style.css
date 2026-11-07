@@ -966,9 +966,63 @@ td,.person b,.activity-copy b,.auth-form-wrap form > label { font-size: 13px; }
   .app-shell .topbar { flex-direction: initial; }
   .admin-top-nav button { font-size: 11px; }
 }
-.resend-verification { margin: 10px 0 0; padding: 0; border: 0; background: transparent; color: #70243b; font: 700 12px 'Manrope',sans-serif; text-decoration: underline; text-underline-offset: 3px; }
-:root[data-theme="dark"] .resend-verification { color: #e5aaba; }
 .password-visibility { display: grid; flex: none; place-items: center; padding: 4px; border: 0; border-radius: 6px; background: transparent; color: #5a464d; }
 .password-visibility:hover { background: #eadde0; color: #70243b; }
 :root[data-theme="dark"] .password-visibility { color: #cdb7be; }
 :root[data-theme="dark"] .password-visibility:hover { background: #49303a; color: #f0c0cb; }
+
+/* Glass surfaces for the admin workspace */
+.app-shell .stat-card,
+.app-shell .panel,
+.app-shell .insight-card {
+  border: 1px solid #ffffff82;
+  background: linear-gradient(135deg, #fffaf080, #f7ecdc70);
+  box-shadow: 0 18px 48px #51301c12, inset 0 1px #ffffffa8;
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
+}
+.app-shell .stat-card:hover {
+  border-color: #ffffffbd;
+  box-shadow: 0 20px 46px #51301c1c, inset 0 1px #ffffffc9;
+}
+.app-shell .full-table td { background: #fffaf064; }
+.app-shell .full-table tbody tr:hover td { background: #fffaf0a0; }
+.app-shell .full-table tbody td:first-child,
+.app-shell .full-table tbody td:last-child { border-color: #ffffff70; }
+.app-shell .insight-card {
+  background: linear-gradient(110deg, #ead7d980, #fff4e280 74%);
+}
+.app-shell .topbar {
+  border-bottom: 1px solid #ffffff66;
+  background: #f5ead8a6;
+  -webkit-backdrop-filter: blur(22px) saturate(145%);
+  backdrop-filter: blur(22px) saturate(145%);
+}
+.app-shell .admin-top-nav button.selected {
+  background: #ead5d9a8;
+  box-shadow: inset 0 0 0 1px #ffffff8a, 0 8px 22px #70243b12;
+}
+:root[data-theme="dark"] .app-shell .stat-card,
+:root[data-theme="dark"] .app-shell .panel,
+:root[data-theme="dark"] .app-shell .insight-card {
+  border: 1px solid #ffffff14;
+  background: linear-gradient(135deg, #392a32b8, #241b20a8);
+  box-shadow: 0 20px 54px #00000030, inset 0 1px #ffffff10;
+  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  backdrop-filter: blur(20px) saturate(125%);
+}
+:root[data-theme="dark"] .app-shell .full-table td { background: #362830a8; }
+:root[data-theme="dark"] .app-shell .full-table tbody tr:hover td { background: #49343fbf; }
+:root[data-theme="dark"] .app-shell .insight-card {
+  background: linear-gradient(110deg, #57333f9c, #30242bbd 74%);
+}
+:root[data-theme="dark"] .app-shell .topbar {
+  border-bottom: 1px solid #ffffff10;
+  background: #171216c9;
+  -webkit-backdrop-filter: blur(22px) saturate(135%);
+  backdrop-filter: blur(22px) saturate(135%);
+}
+:root[data-theme="dark"] .app-shell .admin-top-nav button.selected {
+  background: #6438478f;
+  box-shadow: inset 0 0 0 1px #ffffff1c, 0 8px 22px #00000024;
+}

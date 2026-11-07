@@ -1,6 +1,4 @@
-import hashlib
 import unittest
-from datetime import timedelta
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -81,77 +79,45 @@ class SecurityConfigurationTests(unittest.TestCase):
 
     def test_production_rejects_short_admin_password(self):
         with patch.object(api, "APP_ENV", "production"), \
-             patch.object(api, "ADMIN_PASSWORD", "admin.aditi"), \
-             patch.object(api, "SMTP_HOST", "smtp.example.com"), \
-             patch.object(api, "SMTP_FROM", "accessdesk@example.com"):
+             patch.object(api, "ADMIN_PASSWORD", "admin.aditi"):
             with self.assertRaises(RuntimeError):
                 api.validate_security_config()
 
 
-class EmailVerificationTests(unittest.TestCase):
-    def test_registration_stores_only_a_hashed_verification_token(self):
+class RegistrationApprovalTests(unittest.TestCase):
+    def test_registration_goes_directly_to_admin_approval_without_email(self):
         users = FakeCollection()
         with patch.object(api, "users", users), \
              patch.object(api, "pwd", FakePasswordContext()), \
-             patch.object(api, "send_verification_email", return_value=False) as send_email, \
              patch.object(api, "record"):
             result = api.register(api.RegisterInput(name="Avery Morgan", email="avery@example.com", password="StrongPass123!"))
 
         stored = users.documents[0]
-        self.assertFalse(stored["email_verified"])
+        self.assertTrue(stored["email_verified"])
         self.assertEqual(stored["status"], "pending")
-        self.assertEqual(len(stored["verification_token_hash"]), 64)
-        self.assertNotIn("verification_token", stored)
-        send_email.assert_called_once()
-        self.assertIn("backend console", result["message"])
+        self.assertNotIn("verification_token_hash", stored)
+        self.assertNotIn("verification_expires_at", stored)
+        self.assertIn("sent to the administrator", result["message"])
 
-    def test_verification_activates_only_a_valid_unexpired_token(self):
-        token = "sample-verification-token-which-is-long-enough"
-        token_hash = hashlib.sha256(token.encode()).hexdigest()
-        users = FakeCollection([{
-            "_id": "test-user-id", "email": "avery@example.com", "email_verified": False,
-            "verification_token_hash": token_hash,
-            "verification_expires_at": api.now() + timedelta(hours=1),
-        }])
-        with patch.object(api, "users", users):
-            response = api.verify_email(api.VerifyEmailInput(token=token))
-        self.assertTrue(users.documents[0]["email_verified"])
-        self.assertNotIn("verification_token_hash", users.documents[0])
-        self.assertIn("waiting for admin approval", response["message"])
-
-    def test_expired_verification_token_is_rejected(self):
-        token = "expired-verification-token-which-is-long-enough"
-        users = FakeCollection([{
-            "_id": "test-user-id", "email_verified": False,
-            "verification_token_hash": hashlib.sha256(token.encode()).hexdigest(),
-            "verification_expires_at": api.now() - timedelta(seconds=1),
-        }])
-        with patch.object(api, "users", users):
-            with self.assertRaises(api.HTTPException) as raised:
-                api.verify_email(api.VerifyEmailInput(token=token))
-        self.assertEqual(raised.exception.status_code, 400)
-
-    def test_unverified_account_cannot_sign_in(self):
+    def test_pending_account_can_submit_request_but_must_wait_for_admin(self):
         user = {"_id": "test-user-id", "email": "avery@example.com", "password_hash": "hashed:StrongPass123!",
-                "role": "user", "status": "pending", "email_verified": False}
+                "role": "user", "status": "pending", "email_verified": True}
         with patch.object(api, "users", FakeCollection([user])), patch.object(api, "pwd", FakePasswordContext()):
             with self.assertRaises(api.HTTPException) as raised:
                 api.login(api.LoginInput(email="avery@example.com", password="StrongPass123!"))
         self.assertEqual(raised.exception.status_code, 403)
-        self.assertIn("verify your email", raised.exception.detail)
+        self.assertIn("waiting for admin approval", raised.exception.detail)
 
-    def test_email_change_requires_a_new_verification(self):
+    def test_email_change_does_not_require_verification(self):
         user = {"_id": "test-user-id", "name": "Avery Morgan", "email": "avery@example.com",
                 "role": "user", "status": "approved", "email_verified": True,
                 "created_at": api.now()}
         users = FakeCollection([user])
-        with patch.object(api, "users", users), \
-             patch.object(api, "send_verification_email", return_value=False), \
-             patch.object(api, "record"):
+        with patch.object(api, "users", users), patch.object(api, "record"):
             updated = api.update_profile(api.ProfileInput(name="Avery Morgan", email="avery.new@example.com"), user)
         self.assertEqual(updated["email"], "avery.new@example.com")
-        self.assertFalse(updated["email_verified"])
-        self.assertIn("verification_token_hash", users.documents[0])
+        self.assertTrue(users.documents[0]["email_verified"])
+        self.assertNotIn("verification_token_hash", users.documents[0])
 
 
 if __name__ == "__main__":
